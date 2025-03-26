@@ -11,7 +11,7 @@ class HashMap {
         this.capacity = 16;
         this.load_factor = 0.75;
         this.buckets = new Array(this.capacity).fill(null);
-        this.size = 0;
+        this.length = 0;
     }
 
     // takes the key and hashes it returning an index b/w 0 and capacity - 1
@@ -38,6 +38,7 @@ class HashMap {
             if (current_node.next === null) { //insert new node
                 let new_hash_node = new HashNode(key, value);
                 current_node.next = new_hash_node;
+                this.length++;
                 break
             }
 
@@ -46,7 +47,7 @@ class HashMap {
     }
 
     #updateBucketCap() {
-        if((this.capacity * this.load_factor) < this.size) { //hash map is getting full
+        if((this.capacity * this.load_factor) < this.length) { //hash map is getting full
             let old_hash_map = this.buckets;
             
             this.capacity *= 2; //double map capacity
@@ -93,7 +94,7 @@ class HashMap {
 
         if (this.buckets[index] === null) { //bucket is empty
             this.buckets[index] = new_hash_node;
-            this.size++;
+            this.length++;
             return
         }
 
@@ -101,32 +102,59 @@ class HashMap {
 
         this.#insertNewNode(current_node, key, value); 
         
-        this.size++;
     }
     
     // retrieve value at key or return null if it doesnt exist
     get(key) {
+        let index = this.#hash(key),
+            current_node = this.buckets[index];
+        
+        while (current_node !== null) {
+            if (current_node.key === key) return current_node.value;
 
+            current_node = current_node.next;
+        }
+
+        return null
     }
 
     // check if key exists in hashmap
     has(key) {
-
+        return this.get(key) ? true : false;
     }
 
     // remove entry with key from hashmap and return it or return null if it does not exist
     remove(key) {
+        let index = this.#hash(key),
+        current_node = this.buckets[index];
+    
+        if(current_node.key === key) { //head node is the target node
+            this.buckets[index] = current_node.next;
+            this.length--;
+            return current_node.value
+        } 
 
-    }
+        let del_node = current_node.next;
 
-    // return the number of keys in the hashmap
-    length() {
-        
+        while (del_node !== null) {
+            if (del_node.key === key) {
+                current_node.next = del_node.next;
+                this.length--;
+                return del_node.value
+            }
+
+            current_node = current_node.next;
+            del_node = del_node.next;
+        }
+
+        return null
     }
 
     // remove everything in the hashmap
     clear() {
-
+        this.capacity = 16;
+        this.buckets = new Array(this.capacity).fill(null);
+        this.length = 0;
     }
 
     // return an array containing all the keys in the hashmap
@@ -161,3 +189,11 @@ test.set('ice cream', 'white')
 test.set('jacket', 'blue')
 test.set('kite', 'pink')
 test.set('lion', 'golden')
+test.set('lion', 'brown')
+test.set('liont', 'golden')
+test.set('lionr', 'brown')
+
+console.log(test.length, test.capacity);
+console.log(test.remove("lion"));
+console.log(test.remove("lion"));
+console.log(test.length, test.capacity);
