@@ -157,43 +157,47 @@ class HashMap {
         this.length = 0;
     }
 
+    #bucketiterator(mode) {
+        let array = [];
+
+        for (let index = 0; index < this.buckets.length; index++) {
+            let current_node = this.buckets[index];
+
+            while (current_node !== null) {
+                switch (mode.toLowerCase()) {
+                    case "key":
+                        array.push(current_node.key);
+                        break;
+                
+                    case "value":
+                        array.push(current_node.value);
+                        break;
+
+                    default:
+                        array.push([current_node.key, current_node.value])
+                        break;
+                }
+                
+                current_node = current_node.next;
+            }
+        }
+
+        return array
+    }
+
     // return an array containing all the keys in the hashmap
     keys() {
-
+        return this.#bucketiterator("key");
     }
 
     // return an array containing all the values in the hashmap
     values() {
-
+        return this.#bucketiterator("value");
     }
 
     // return an array of arrays with each sub array containing all the key, value 
     // pairs in the hashmap
     entries() {
-
+        return this.#bucketiterator("entries");
     }
 }
-
-
-const test = new HashMap() // or HashMap() if using a factory
-
-test.set('apple', 'red')
-test.set('banana', 'yellow')
-test.set('carrot', 'orange')
-test.set('dog', 'brown')
-test.set('elephant', 'gray')
-test.set('frog', 'green')
-test.set('grape', 'purple')
-test.set('hat', 'black')
-test.set('ice cream', 'white')
-test.set('jacket', 'blue')
-test.set('kite', 'pink')
-test.set('lion', 'golden')
-test.set('lion', 'brown')
-test.set('liont', 'golden')
-test.set('lionr', 'brown')
-
-console.log(test.length, test.capacity);
-console.log(test.remove("lion"));
-console.log(test.remove("lion"));
-console.log(test.length, test.capacity);

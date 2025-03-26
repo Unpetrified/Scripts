@@ -238,15 +238,3 @@ class LinkedList {
     }
 
 }
-
-// example uses class syntax - adjust as necessary
-const list = new LinkedList();
-
-list.push("dog");
-list.push("cat");
-list.push("parrot");
-list.push("hamster");
-list.push("snake");
-list.push("turtle");
-
-console.log(list.show())
