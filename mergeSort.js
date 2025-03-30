@@ -1,4 +1,4 @@
-function mergeSort(arr) {
+export default function mergeSort(arr) {
     if (arr.length <= 1) {
       return arr;
     }
@@ -16,6 +16,17 @@ function mergeSort(arr) {
     let j = 0;
   
     while (i < left.length && j < right.length) {
+
+      // remove duplicates
+      if(left[i] === result[result.length-1]) {
+          i++;
+          continue
+
+      } else if(right[j] === result[result.length-1]) {
+        j++;
+        continue
+      }
+
       if (left[i] < right[j]) {
         result.push(left[i]);
         i++;
