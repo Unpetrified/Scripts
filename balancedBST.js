@@ -130,7 +130,7 @@ class Tree {
         this.#recursiveCall(queue, callback)
     }
 
-    forEachNode(callback) {
+    levelOrder(callback) {
         if(typeof(callback) !== "function") {
             throw new Error(`A function was expected but ${typeof(callback)} was provided instead`);
         }
@@ -141,6 +141,18 @@ class Tree {
         if(node !== null) queue.push(node);
 
         this.#recursiveCall(queue, callback)
+    }
+
+    preOrder(callback) {
+
+    }
+
+    inOrder(callback) {
+
+    }
+
+    postOrder(callback) {
+        
     }
 
 }
@@ -161,9 +173,10 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 let tree = new Tree([1,4, 9, 2, 5, 6, 0, 43, 55, 23, 3, 61]);
 
 prettyPrint(tree.root);
-let sum = 0;
-tree.forEachNode(node => {
-    sum += node.value
+let list = []
+
+tree.levelOrder(node => {
+    list.push(node.value);
 })
 
-console.log(sum);
+console.log(list);
