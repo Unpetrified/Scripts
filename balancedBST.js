@@ -1,4 +1,5 @@
-import mergeSort from "./mergeSort.js"
+import mergeSort from "./mergeSort.js";
+import Stack from "./stack.js";
 
 class Node {
     constructor(value) {
@@ -114,7 +115,7 @@ class Tree {
         }
     }
 
-    #recursiveCall(queue, callback) {
+    #recursiveCallLevelOrder(queue, callback) {
         let top_node = queue.shift();
     
         if(top_node === undefined) return
@@ -127,32 +128,57 @@ class Tree {
         if(top_node.right !== null) {
             queue.push(top_node.right);
         }
-        this.#recursiveCall(queue, callback)
+        this.#recursiveCallLevelOrder(queue, callback)
     }
 
-    levelOrder(callback) {
+    #checkCallback(callback) {
         if(typeof(callback) !== "function") {
             throw new Error(`A function was expected but ${typeof(callback)} was provided instead`);
         }
+    }
+
+    levelOrder(callback) {
         
+        this.#checkCallback(callback)
+
         let queue = [],
             node = this.root;
         
         if(node !== null) queue.push(node);
 
-        this.#recursiveCall(queue, callback)
+        this.#recursiveCallLevelOrder(queue, callback)
+    }
+
+    #recursivePreOrder(stack, callback) {
+        let top_node = stack.pop();
+    
+        if(top_node === null) return;
+
+        top_node = top_node.value;
+
+        callback(top_node);
+
+        if(top_node.right !== null) {
+            stack.push(top_node.right);
+        }
+
+        if(top_node.left !== null) {
+            stack.push(top_node.left);
+        }
+
+        this.#recursivePreOrder(stack, callback)
     }
 
     preOrder(callback) {
 
-    }
+        this.#checkCallback(callback);
 
-    inOrder(callback) {
+        let stack = new Stack(),
+            node = this.root;
 
-    }
+        if(node !== null) stack.push(node);
 
-    postOrder(callback) {
-        
+        this.#recursivePreOrder(stack, callback);
     }
 
 }
@@ -173,10 +199,7 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 let tree = new Tree([1,4, 9, 2, 5, 6, 0, 43, 55, 23, 3, 61]);
 
 prettyPrint(tree.root);
-let list = []
-
-tree.levelOrder(node => {
-    list.push(node.value);
-})
-
-console.log(list);
+tree.delete(4);
+tree.delete(5);
+tree.delete(2);
+prettyPrint(tree.root);
