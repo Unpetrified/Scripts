@@ -106,7 +106,7 @@ class Tree {
 
         while(true) {
             
-            if(node === null) return "Node not in tree"
+            if(node === null) return node
 
             if(node.value === value) return node
 
@@ -149,36 +149,75 @@ class Tree {
         this.#recursiveCallLevelOrder(queue, callback)
     }
 
-    #recursivePreOrder(stack, callback) {
-        let top_node = stack.pop();
-    
-        if(top_node === null) return;
-
-        top_node = top_node.value;
-
-        callback(top_node);
-
-        if(top_node.right !== null) {
-            stack.push(top_node.right);
-        }
-
-        if(top_node.left !== null) {
-            stack.push(top_node.left);
-        }
-
-        this.#recursivePreOrder(stack, callback)
+    inOrder(callback, root=this.root) {
+        if(root === null) return
+        this.inOrder(callback, root.left);
+        callback(root);
+        this.inOrder(callback, root.right);
     }
 
-    preOrder(callback) {
+    preOrder(callback, root=this.root) {
+        if(root === null) return
+        callback(root);
+        this.inOrder(callback, root.left);
+        this.inOrder(callback, root.right);
+    }
 
-        this.#checkCallback(callback);
+    postOrder(callback, root=this.root) {
+        if(root === null) return
+        this.inOrder(callback, root.left);
+        this.inOrder(callback, root.right);
+        callback(root);
+    }
 
-        let stack = new Stack(),
+    depth(node_value) {
+        let depth = 0,
             node = this.root;
 
-        if(node !== null) stack.push(node);
+        while(true) {
+            if (node === null) return "Node not in tree";
 
-        this.#recursivePreOrder(stack, callback);
+            if(node.value === node_value) return depth
+
+            if(node.value > node_value) {
+                node = node.left;
+                depth++;
+                continue;
+            }
+
+            if(node.value < node_value) {
+                node = node.right;
+                depth++;
+                continue;
+            }
+        }
+
+    }
+
+    #traverse(root, counter, original, heighest) {
+        if (root === null) {
+            return 0
+        }
+        counter++;
+        let heighest_left = this.#traverse(root.left, counter, original, heighest);
+        let heighest_right = this.#traverse(root.right, counter, original, heighest);
+        if (counter > heighest) {
+            heighest = counter
+            if (heighest_left > counter) heighest = heighest_left
+            if (heighest_right > counter) heighest = heighest_right
+        };
+        
+        return heighest
+    }
+
+    height(node) {
+        let root = this.find(node);
+
+        if (root === null) return null
+
+        let node_height = this.#traverse(root, 0, root.value, 0)-1;
+        
+        return node_height
     }
 
 }
@@ -196,10 +235,6 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
     }
   };
 
-let tree = new Tree([1,4, 9, 2, 5, 6, 0, 43, 55, 23, 3, 61]);
+let tree = new Tree([3,6,4,8,7,5,1,2]);
 
-prettyPrint(tree.root);
-tree.delete(4);
-tree.delete(5);
-tree.delete(2);
 prettyPrint(tree.root);
