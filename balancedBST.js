@@ -150,7 +150,7 @@ class Tree {
     }
 
     inOrder(callback, root=this.root) {
-        if(root === null) return
+        if(root === null || root === undefined) return
         this.inOrder(callback, root.left);
         callback(root);
         this.inOrder(callback, root.right);
@@ -220,21 +220,31 @@ class Tree {
         return node_height
     }
 
+    #checkHeight(node) {
+        
+        if (node === null || node === undefined) return 0
+        
+        let left_subtree_height = this.#checkHeight(node.left);
+        if (left_subtree_height === -1) return -1;
+
+        let right_subtree_height = this.#checkHeight(node.right);
+        if (right_subtree_height === -1) return -1;
+
+        if (Math.abs(left_subtree_height-right_subtree_height) > 1) return -1
+
+        return (Math.max(left_subtree_height, right_subtree_height) + 1);
+    }
+
+    isBalanced() {
+        return (this.#checkHeight(this.root) !== -1) ? true : false
+    }
+
+    reBalance() {
+        let arr = [];
+        this.inOrder(node => {
+            arr.push(node.value);
+        }, this.root);
+        this.root = this.#buildTree(arr);
+    }
+
 }
-
-const prettyPrint = (node, prefix = "", isLeft = true) => {
-    if (node === null || node === undefined) {
-      return;
-    }
-    if (node.right !== null) {
-      prettyPrint(node.right, `${prefix}${isLeft ? "│   " : "    "}`, false);
-    }
-    console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.value}`);
-    if (node.left !== null) {
-      prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
-    }
-  };
-
-let tree = new Tree([3,6,4,8,7,5,1,2]);
-
-prettyPrint(tree.root);
